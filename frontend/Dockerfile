@@ -6,13 +6,54 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy all source files
-COPY . .
+# Copy source files (but not public directory yet)
+COPY src ./src
+COPY .env ./
+
+# Create public directory and files manually
+RUN mkdir -p public
+RUN echo '<!DOCTYPE html>\n\
+<html lang="en">\n\
+  <head>\n\
+    <meta charset="utf-8" />\n\
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />\n\
+    <meta name="viewport" content="width=device-width, initial-scale=1" />\n\
+    <meta name="theme-color" content="#000000" />\n\
+    <meta name="description" content="Todo App created with MERN stack" />\n\
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />\n\
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />\n\
+    <title>Todo App</title>\n\
+  </head>\n\
+  <body>\n\
+    <noscript>You need to enable JavaScript to run this app.</noscript>\n\
+    <div id="root"></div>\n\
+  </body>\n\
+</html>' > public/index.html
+
+RUN echo '{\n\
+  "short_name": "Todo App",\n\
+  "name": "Todo MERN App",\n\
+  "icons": [\n\
+    {\n\
+      "src": "favicon.ico",\n\
+      "sizes": "64x64 32x32 24x24 16x16",\n\
+      "type": "image/x-icon"\n\
+    }\n\
+  ],\n\
+  "start_url": ".",\n\
+  "display": "standalone",\n\
+  "theme_color": "#000000",\n\
+  "background_color": "#ffffff"\n\
+}' > public/manifest.json
+
+# Create an empty favicon.ico
+RUN touch public/favicon.ico
 
 # Debug to see what files are available
-RUN ls -la
 RUN echo "Directory structure:"
-RUN find . -type d | sort
+RUN ls -la
+RUN echo "Public directory contents:"
+RUN ls -la public/
 
 # Set production build environment 
 ENV NODE_ENV=production
