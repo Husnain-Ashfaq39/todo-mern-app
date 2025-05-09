@@ -2,7 +2,7 @@ version: '3'
 
 services:
   backend:
-    build: ./backend
+    image: husnain239/todo-backend:latest
     ports:
       - "50010:50010"
     environment:
@@ -13,7 +13,7 @@ services:
     restart: always
 
   frontend:
-    build: ./frontend
+    image: husnain239/todo-frontend:latest
     ports:
       - "80:80"
     depends_on:
