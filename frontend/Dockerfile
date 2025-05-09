@@ -1,4 +1,4 @@
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
@@ -6,15 +6,21 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy source files
-COPY . .
+# First copy public directory to ensure index.html is available
+COPY public ./public
+
+# Copy the rest of the source files
+COPY src ./src
+
+# Copy any other necessary files
+COPY .env ./
 
 # Add more verbose logging for debugging
 RUN ls -la
+RUN echo "Contents of public directory:"
+RUN ls -la public/
 RUN echo "Node version: $(node -v)"
 RUN echo "NPM version: $(npm -v)"
-# Show environment variables (will be empty here)
-RUN env
 
 # Set production build environment 
 ENV NODE_ENV=production

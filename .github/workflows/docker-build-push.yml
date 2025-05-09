@@ -33,14 +33,14 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: husnain239/todo-backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/todo-backend:latest
 
       - name: Build and push Frontend image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
-          tags: husnain239/todo-frontend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/todo-frontend:latest
 
       - name: Notify on success
         if: success()
