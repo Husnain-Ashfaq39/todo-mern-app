@@ -17,6 +17,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Check Directory Structure
+        run: |
+          echo "Workspace directory:"
+          ls -la
+          echo "Frontend directory:"
+          ls -la frontend/
+          echo "Frontend public directory:"
+          ls -la frontend/public/ || echo "Public directory not found!"
+
       - name: Check Docker Hub Credentials
         run: |
           echo "Using username: ${{ secrets.DOCKER_USERNAME }}"

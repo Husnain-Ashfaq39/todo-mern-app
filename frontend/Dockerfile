@@ -2,23 +2,19 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files and install dependencies first (for better caching)
 COPY package*.json ./
 RUN npm install
 
-# First copy public directory to ensure index.html is available
-COPY public ./public
+# Copy all source files
+COPY . .
 
-# Copy the rest of the source files
-COPY src ./src
-
-# Copy any other necessary files
-COPY .env ./
-
-# Add more verbose logging for debugging
+# Debug to see what files are available
 RUN ls -la
-RUN echo "Contents of public directory:"
-RUN ls -la public/
+RUN echo "Directory structure:"
+RUN find . -type d | sort
+RUN echo "Contents of current directory:"
+RUN ls -la
 RUN echo "Node version: $(node -v)"
 RUN echo "NPM version: $(npm -v)"
 
