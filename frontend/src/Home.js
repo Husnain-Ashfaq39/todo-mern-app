@@ -4,19 +4,22 @@ import './App.css';
 import axios from 'axios';
 import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill, BsPencil, BsSave } from 'react-icons/bs';
 
+// Use environment variable or default to localhost for development
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:50010';
+
 const Home = () => {
     const [todos, setTodos] = useState([]);
     const [updatetask, setUpdatetask] = useState('');
     const [taskid, setTaskid] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:50010/get')
+        axios.get(`${API_URL}/get`)
             .then(result => setTodos(result.data))
             .catch(err => console.log(err));
     }, []);
 
     const edit = (id) => {
-        axios.put(`http://localhost:50010/edit/${id}`)
+        axios.put(`${API_URL}/edit/${id}`)
             .then(result => {
                 console.log(result.data);
                 const updatedTodos = todos.map(todo => {
@@ -31,7 +34,7 @@ const Home = () => {
     };
 
     const Update = (id, updatedTask) => {
-        axios.put(`http://localhost:50010/update/${id}`, { task: updatedTask })
+        axios.put(`${API_URL}/update/${id}`, { task: updatedTask })
             .then(result => {
                 console.log(result.data);
                 const updatedTodos = todos.map(todo => {
@@ -51,7 +54,7 @@ const Home = () => {
     const Hdelete = (id) => {
         // Add confirmation dialog
         if (window.confirm('Are you sure you want to delete this task?')) {
-            axios.delete(`http://localhost:50010/delete/${id}`)
+            axios.delete(`${API_URL}/delete/${id}`)
                 .then(result => {
                     console.log(result.data);
                     const updatedTodos = todos.filter(todo => todo._id !== id);
