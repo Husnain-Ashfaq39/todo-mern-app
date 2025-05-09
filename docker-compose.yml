@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "50010:50010"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/todo
+      - PORT=50010
+    depends_on:
+      - mongo
+    restart: always
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+volumes:
+  mongo-data: 
