@@ -31,6 +31,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 const User = require('./Models/User');
 const Post = require('./Models/Post');
 
+
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -160,6 +161,28 @@ app.put('/api/users/me', verifyToken, async (req, res) => {
   }
 });
 
+// Search users
+app.get('/api/users/search', verifyToken, async (req, res) => {
+  try {
+    const query = req.query.q;
+    if (!query) {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+    
+    // Search by username or email
+    const users = await User.find({
+      $or: [
+        { username: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } }
+      ]
+    }).select('-password');
+    
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Get user by ID
 app.get('/api/users/:id', async (req, res) => {
   try {
@@ -267,6 +290,21 @@ app.get('/api/posts', verifyToken, async (req, res) => {
     })
     .populate('userId', 'username profilePicture')
     .sort({ createdAt: -1 });
+    
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get discover posts (all posts)
+app.get('/api/posts/discover', verifyToken, async (req, res) => {
+  try {
+    // Get all posts, sorted by most recent
+    const posts = await Post.find()
+      .populate('userId', 'username profilePicture')
+      .sort({ createdAt: -1 })
+      .limit(50); // Limit to 50 posts for performance
     
     res.json(posts);
   } catch (err) {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../Context/AuthContext';
+import { FaImage, FaTimes } from 'react-icons/fa';
 
 // Use environment variable or default to localhost for development
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:50010';
@@ -52,32 +53,59 @@ const PostForm = ({ onPostCreated }) => {
   };
   
   return (
-    <div className="post-form-container">
+    <div className="post-form">
       <div className="post-form-header">
         <img 
           src={currentUser?.profilePicture || 'https://via.placeholder.com/40'} 
           alt={currentUser?.username} 
           className="avatar"
         />
-        <h3>Create Post</h3>
+        <h3>What's on your mind?</h3>
       </div>
+      
       {error && <div className="error-message">{error}</div>}
+      
       <form onSubmit={handleSubmit}>
         <textarea
-          placeholder="What's on your mind?"
+          placeholder="Share your thoughts..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
           required
         />
-        <input
-          type="text"
-          placeholder="Image URL (optional)"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-        />
-        <button type="submit" className="post-button" disabled={loading}>
-          {loading ? 'Posting...' : 'Post'}
-        </button>
+        
+        {image && (
+          <div className="image-preview">
+            <img src={image} alt="Preview" />
+            <button 
+              type="button" 
+              className="remove-image"
+              onClick={() => setImage('')}
+            >
+              <FaTimes />
+            </button>
+          </div>
+        )}
+        
+        <div className="post-form-actions">
+          <button 
+            type="button" 
+            className="add-image"
+            onClick={() => {
+              const url = prompt('Enter image URL:');
+              if (url) setImage(url);
+            }}
+          >
+            <FaImage /> Add Image
+          </button>
+          
+          <button 
+            type="submit" 
+            className="post-button" 
+            disabled={loading || !content.trim()}
+          >
+            {loading ? 'Posting...' : 'Post'}
+          </button>
+        </div>
       </form>
     </div>
   );
