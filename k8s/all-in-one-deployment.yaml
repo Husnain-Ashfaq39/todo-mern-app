@@ -78,9 +78,11 @@ spec:
         - containerPort: 50010
         env:
         - name: MONGODB_URI
-          value: "mongodb://mongo:27017/todo"
+          value: "mongodb://mongo:27017/social-platform"
         - name: PORT
           value: "50010"
+        - name: JWT_SECRET
+          value: "your_super_secret_jwt_key"
 ---
 # Backend Service
 apiVersion: v1
@@ -117,6 +119,9 @@ spec:
         image: ${DOCKER_USERNAME}/todo-frontend:latest
         ports:
         - containerPort: 80
+        env:
+        - name: REACT_APP_API_URL
+          value: "http://127.0.0.1:50010"
 ---
 # Frontend Service
 apiVersion: v1
